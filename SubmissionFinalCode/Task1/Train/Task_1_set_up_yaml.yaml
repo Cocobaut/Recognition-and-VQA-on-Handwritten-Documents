@@ -1,0 +1,7 @@
+path: E:/AI Competition/TextOCR/dataset_project 
+
+train: train_data/images
+val: test_data/images
+
+names:
+  0: handwritten_text

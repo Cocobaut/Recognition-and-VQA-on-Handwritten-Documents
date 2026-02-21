@@ -1,2 +1,7 @@
 dataset_project/
 dataset_set_up/
+
+venv/
+
+yolo11l.pt
+yolo26n.pt
