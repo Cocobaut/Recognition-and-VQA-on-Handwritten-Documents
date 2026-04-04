@@ -3,5 +3,7 @@ dataset_set_up/
 
 venv/
 
-yolo11l.pt
+yolo11l-obb.pt
 yolo26n.pt
+
+run_setup.bat

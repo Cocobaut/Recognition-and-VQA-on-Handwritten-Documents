@@ -12,7 +12,12 @@ def train_process():
         print("CẢNH BÁO: Không tìm thấy GPU, hệ thống sẽ chạy bằng CPU (rất chậm)!")
 
     # 1. Khởi tạo mô hình YOLO11x - Bản mạnh nhất cho độ chính xác tối ưu
-    model = YOLO("yolo11l.pt") 
+    # Dùng khi train lần đầu
+    model = YOLO("yolo11l-obb.pt")
+
+    # Dùng khi muốn train thêm
+    # old_weight_path = r"E:\AI Competition\TextOCR\SubmissionFinalCode\Task1\Train\Weight\YOLO11l_OBB_Task1_Precision\weights\last.pt"
+    # model = YOLO(old_weight_path)
 
     # 2. Cấu hình Training chuyên sâu cho bài toán OCR
     results = model.train(
@@ -38,7 +43,7 @@ def train_process():
         
         # Lưu và quản lý
         project=Task_1_Train_Test_Config["weight"],
-        name="YOLO11l_Task1_Precision",
+        name="YOLO11l_OBB_Task1_Precision",
         save=True,
         exist_ok=True
     )
