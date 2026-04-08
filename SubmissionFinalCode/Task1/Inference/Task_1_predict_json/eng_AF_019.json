@@ -1,0 +1,9 @@
+{
+    "task_info": {
+        "name": "Task 1: Text Detection (OBB)",
+        "total_blocks": 0
+    },
+    "output": {
+        "text_blocks": []
+    }
+}
