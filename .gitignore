@@ -3,7 +3,22 @@ dataset_set_up/
 
 venv/
 
-yolo11l.pt
-yolo26n.pt
+*.pt
+*.pth
+*.pkl
 
-tmp_layoutlmv3_checkpoints/
+/SubmissionFinalCode/Task1/Train/Weight/*
+!/SubmissionFinalCode/Task1/Train/Weight/.gitkeep
+
+/SubmissionFinalCode/Task3/Train/Weight/*
+!/SubmissionFinalCode/Task3/Train/Weight/.gitkeep
+
+/SubmissionFinalCode/Task4/Train/Weight/*
+!/SubmissionFinalCode/Task4/Train/Weight/.gitkeep
+
+/SubmissionFinalCode/Task5/Train/Weight/*
+!/SubmissionFinalCode/Task5/Train/Weight/.gitkeep
+
+SubmissionFinalCode/Task2/Inference/Task_2_Visualization
+SubmissionFinalCode/Task4/Inference/Task_4_Visualization
+SubmissionFinalCode/Task1/Inference/Task_1_OBB_Visualization

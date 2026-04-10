@@ -8,9 +8,9 @@ import Config.config as config
 
 # 1. Lấy cấu hình từ config
 Task_2_Config = config.return_Task2_Predict_Config()
-image_dir = Task_2_Config["input_images_test"] 
-json_gt_dir = Task_2_Config["json_test"]               # Thư mục chứa Ground Truth
-json_pred_dir = Task_2_Config["output_json_inference"] # Thư mục chứa kết quả của Code
+image_dir = Task_2_Config["input_images"] 
+# json_gt_dir = Task_2_Config["json_test"]               # Thư mục chứa Ground Truth
+json_pred_dir = Task_2_Config["output_json"]            # Thư mục chứa kết quả của Code
 
 # 2. Đường dẫn lưu kết quả visualize
 current_script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -32,16 +32,16 @@ def draw_comparison():
 
     for p_path in tqdm(pred_files):
         # Đường dẫn file Ground Truth tương ứng (cùng tên)
-        gt_path = Path(json_gt_dir) / p_path.name
+        # gt_path = Path(json_gt_dir) / p_path.name
         
-        if not gt_path.exists():
-            continue
+        # if not gt_path.exists():
+        #     continue
 
         # Đọc dữ liệu từ cả 2 file JSON
         with open(p_path, 'r', encoding='utf-8') as f:
             data_pred = json.load(f)
-        with open(gt_path, 'r', encoding='utf-8') as f:
-            data_gt = json.load(f)
+        # with open(gt_path, 'r', encoding='utf-8') as f:
+        #     data_gt = json.load(f)
 
         # 3. Tìm ảnh gốc
         img_path = None
@@ -55,30 +55,30 @@ def draw_comparison():
         img = imread_unicode(img_path)
         if img is None: continue
 
-        # --- A. Vẽ INPUT (Từng chữ đơn lẻ) - Màu ĐỎ (Dùng từ file GT cho chuẩn) ---
-        input_words = data_gt.get('input', {}).get('text_blocks', [])
-        for word in input_words:
-            p = word['polygon']
-            pts = np.array([[p['x0'], p['y0']], [p['x1'], p['y1']], 
-                            [p['x2'], p['y2']], [p['x3'], p['y3']]], np.int32).reshape((-1, 1, 2))
-            cv2.polylines(img, [pts], isClosed=True, color=(0, 0, 255), thickness=1)
+        # A. Vẽ Input (từng chữ đơn lẻ) - Màu đỏ (Dùng từ file GT cho chuẩn) ---
+        # input_words = data_gt.get('input', {}).get('text_blocks', [])
+        # for word in input_words:
+        #     p = word['polygon']
+        #     pts = np.array([[p['x0'], p['y0']], [p['x1'], p['y1']], 
+        #                     [p['x2'], p['y2']], [p['x3'], p['y3']]], np.int32).reshape((-1, 1, 2))
+        #     cv2.polylines(img, [pts], isClosed=True, color=(0, 0, 255), thickness=1)
 
-        # --- B. Vẽ GROUND TRUTH (Dòng mẫu) - Màu XANH DƯƠNG ---
-        # Lấy từ data_gt['output']['text_blocks']
-        gt_lines = data_gt.get('output', {}).get('text_blocks', [])
-        for gt in gt_lines:
-            p = gt['polygon']
-            pts = np.array([[p['x0'], p['y0']], [p['x1'], p['y1']], 
-                            [p['x2'], p['y2']], [p['x3'], p['y3']]], np.int32).reshape((-1, 1, 2))
+        # B. Vẽ Ground Truth - Màu xanh dương
+        # # Lấy từ data_gt['output']['text_blocks']
+        # gt_lines = data_gt.get('output', {}).get('text_blocks', [])
+        # for gt in gt_lines:
+        #     p = gt['polygon']
+        #     pts = np.array([[p['x0'], p['y0']], [p['x1'], p['y1']], 
+        #                     [p['x2'], p['y2']], [p['x3'], p['y3']]], np.int32).reshape((-1, 1, 2))
             
-            # Vẽ nét dày màu Xanh Dương (Blue)
-            cv2.polylines(img, [pts], isClosed=True, color=(255, 0, 0), thickness=3)
+        #     # Vẽ nét dày màu Xanh Dương (Blue)
+        #     cv2.polylines(img, [pts], isClosed=True, color=(255, 0, 0), thickness=3)
             
-            # Ghi nhãn GT ở dưới bbox
-            cv2.putText(img, f"GT_{gt['id']}", (int(p['x0']), int(p['y3']) + 15), 
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0), 1)
+        #     # Ghi nhãn GT ở dưới bbox
+        #     cv2.putText(img, f"GT_{gt['id']}", (int(p['x0']), int(p['y3']) + 15), 
+        #                 cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0), 1)
 
-        # --- C. Vẽ PREDICTED (Kết quả code của bạn) - Màu XANH LÁ ---
+        # C. Vẽ predict (Kết quả code) - Màu xanh lá
         # Lấy từ data_pred['output_predicted']['text_blocks']
         pred_lines = data_pred.get('output_predicted', {}).get('text_blocks', [])
         for pred in pred_lines:
