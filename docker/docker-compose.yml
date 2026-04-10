@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  textocr_app:
+    build: 
+      context: ..                   # Quan trọng: Báo Docker lùi ra thư mục gốc để lấy code
+      dockerfile: docker/Dockerfile # Trỏ vị trí file Dockerfile
+    container_name: ocr_pipeline_container
+    volumes:
+      - ..:/app                     # Quan trọng: Mount toàn bộ thư mục gốc vào /app
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    tty: true
+    stdin_open: true

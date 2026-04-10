@@ -1,29 +1,9 @@
-# --- Trọng số và Model (Rất nặng) ---
-*.pt
-*.pth
-*.h5
-*.tmp
-**/checkpoint-*/
-**/Weight/checkpoint-*/
-
-# --- Dữ liệu Dataset (Cực nặng) ---
 dataset_project/
 dataset_set_up/
 
-# --- Môi trường ảo và Thư viện ---
 venv/
-.env
-__pycache__/
-*.pyc
 
-# --- Kết quả chạy (Visualization/Logs) ---
-SubmissionFinalCode/Task1/Inference/Task_1_OBB_Visualization/
-SubmissionFinalCode/Task2/Inference/Task_2_Visualization/
-runs/
-predict/
+yolo11l.pt
+yolo26n.pt
 
-# --- File hệ thống và Tool ---
-.vscode/
-.idea/
-run_setup.bat
-.DS_Store
+tmp_layoutlmv3_checkpoints/
