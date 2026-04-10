@@ -1,0 +1,22 @@
+# --- Core Deep Learning & Computer Vision ---
+torch
+torchvision
+torchaudio
+ultralytics
+opencv-python
+numpy
+Pillow
+
+# --- Hugging Face Ecosystem (TrOCR, LayoutLMv3, Llama) ---
+transformers
+datasets
+accelerate
+peft
+bitsandbytes
+
+# --- Utilities ---
+gdown
+tqdm
+
+# --- Layout Analysis (Optional but recommended for LayoutLMv3) ---
+pyyaml
