@@ -6,60 +6,50 @@ import torch
 from tqdm import tqdm
 from transformers import AutoTokenizer, BitsAndBytesConfig
 from peft import AutoPeftModelForCausalLM
+from Config import config
 
-# ==============================================================================
-# 1. CẤU HÌNH ĐƯỜNG DẪN
-# ==============================================================================
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "model")
-INPUT_JSON_DIR = os.path.join(BASE_DIR, "..", "..", "Task4", "predict")
+Task_5_Predict_Config = config.return_Task5_Predict_Config()
 
-OUTPUT_DIR = os.path.join(BASE_DIR, "..", "..", "Task5", "predict")
-os.makedirs(OUTPUT_DIR, exist_ok=True)
-OUTPUT_FILE = os.path.join(OUTPUT_DIR, "Task_5_predict.json")
+# 1. Cấu hình đường dẫn
+model_path = os.path.join(Task_5_Predict_Config["weight"], "model", "model")
+input_json = Task_5_Predict_Config["input_json"]
+
+output_json = Task_5_Predict_Config["output_json"]
 
 def main():
-    # ==============================================================================
-    # KIỂM TRA GPU - NẾU KHÔNG CÓ THÌ NGẮT NGAY LẬP TỨC!
-    # ==============================================================================
     if not torch.cuda.is_available():
-        print("❌ LỖI CHÍ MẠNG: Không tìm thấy GPU Nvidia (hoặc chưa cài đúng PyTorch CUDA)!")
+        print("- Lỗi: Không tìm thấy GPU Nvidia (hoặc chưa cài đúng PyTorch CUDA)!")
         print("Chương trình đã bị ngắt để tránh việc chạy CPU quá chậm.")
         sys.exit(1) # Lệnh thoát ngang
     
-    print(f"🔥 Đã nhận diện GPU: {torch.cuda.get_device_name(0)}")
+    print(f"- Đã nhận diện GPU: {torch.cuda.get_device_name(0)}")
 
-    # ==============================================================================
-    # 2. NẠP MÔ HÌNH VÀO GPU BẰNG PEFT + 4-BIT
-    # ==============================================================================
-    print(f"🔄 Đang tải mô hình vào Card Đồ Họa từ: {MODEL_PATH}")
+    # 2. Nạp mô hình
+    print(f"- Đang tải mô hình vào Card Đồ Họa từ: {model_path}")
     
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
+    tokenizer = AutoTokenizer.from_pretrained(model_path)
     
-    # Ép 4-bit để chạy mượt trên RTX 4060 (8GB VRAM)
     quantization_config = BitsAndBytesConfig(
         load_in_4bit=True,
         bnb_4bit_compute_dtype=torch.float16
     )
     
     model = AutoPeftModelForCausalLM.from_pretrained(
-        MODEL_PATH,
+        model_path,
         quantization_config=quantization_config,
-        device_map="cuda" # Ép chặt vào GPU
+        device_map="cuda"
     )
     model.eval()
 
     alpaca_prompt = """Dưới đây là một yêu cầu. Hãy sử dụng thông tin trong phần Ngữ cảnh để trả lời thật chính xác.\n\n### Yêu cầu:\n{}\n\n### Ngữ cảnh (Layout JSON):\n{}\n\n### Trả lời:\n{}"""
 
-    # ==============================================================================
-    # 3. QUÉT FILE VÀ DỰ ĐOÁN
-    # ==============================================================================
-    json_files = glob.glob(os.path.join(INPUT_JSON_DIR, "*.json"))
-    print(f"🔍 Tìm thấy {len(json_files)} file JSON đầu vào từ Task 4.\n")
+    # 3. Dự đoán
+    json_files = glob.glob(os.path.join(input_json, "*.json"))
+    print(f"- Tìm thấy {len(json_files)} file JSON đầu vào từ Task 4.\n")
 
     results = []
 
-    for file_path in tqdm(json_files, desc="Tiến độ dự đoán (GPU 🚀)"):
+    for file_path in tqdm(json_files, desc="Tiến độ dự đoán (GPU)"):
         with open(file_path, 'r', encoding='utf-8') as f:
             try:
                 data = json.load(f)
@@ -102,16 +92,12 @@ def main():
             
         results.append(file_results)
         
-    # ==============================================================================
-    # 4. LƯU KẾT QUẢ
-    # ==============================================================================
-    with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
+    # 4. Lưu kết quả
+    with open(output_json, 'w', encoding='utf-8') as f:
         json.dump(results, f, ensure_ascii=False, indent=4)
         
-    print("\n" + "="*60)
-    print(f"✅ HOÀN TẤT DỰ ĐOÁN SIÊU TỐC!")
-    print(f"💾 File đáp án được lưu tại: {OUTPUT_FILE}")
-    print("="*60)
+    print(f"- Hoàn tất dự đoán")
+    print(f"- File đáp án được lưu tại: {output_json}")
 
 if __name__ == "__main__":
     main()

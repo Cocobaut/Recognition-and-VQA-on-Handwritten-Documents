@@ -14,21 +14,15 @@ from transformers import (
 # Import file Config của dự án
 from Config import config
 
-# ==========================================
-# 1. LẤY CẤU HÌNH TỪ CONFIG
-# ==========================================
+# 1. Set up cấu hình
 Task_4_Train_Config = config.return_Task4_Train_Test_Config()
 
-TRAIN_JSON_DIR = Task_4_Train_Config["json_train"]  # dataset_project/train_data/task_4
-TEST_JSON_DIR = Task_4_Train_Config["json_test"]    # dataset_project/test_data/task_4
-WEIGHT_OUTPUT_DIR = Task_4_Train_Config["weight"]   # E:/AI Competition/TextOCR/SubmissionFinalCode/Task4/Train/Weight
+train_json_dir = Task_4_Train_Config["json_train"] 
+test_json_dir = Task_4_Train_Config["json_test"]
+weight_output_dir = Task_4_Train_Config["weight"]
+os.makedirs(weight_output_dir, exist_ok=True)
 
-# Tạo thư mục lưu weight nếu chưa có
-os.makedirs(WEIGHT_OUTPUT_DIR, exist_ok=True)
-
-# ==========================================
-# 2. HÀM XỬ LÝ DỮ LIỆU
-# ==========================================
+# 2. Hàm xử lí dữ liệu
 def normalize_bbox(polygon, max_x=4230, max_y=4230):
     """Chuẩn hóa tọa độ bounding box về khoảng 0-1000 cho LayoutLMv3"""
     x_coords = [polygon['x0'], polygon['x1'], polygon['x2'], polygon['x3']]
@@ -102,28 +96,24 @@ def load_data(data_dir, limit=None, is_balanced=False):
 
     return data, sorted(list(label_set))
 
-# ==========================================
-# 3. CHẠY PIPELINE HUẤN LUYỆN
-# ==========================================
+# 3. Huấn luyện
 def main():
     # Load data
-    print("--- CHUẨN BỊ DỮ LIỆU ---")
-    train_samples, train_labels = load_data(TRAIN_JSON_DIR, limit=2000, is_balanced=True)
-    test_samples, test_labels = load_data(TEST_JSON_DIR, limit=None, is_balanced=False)
+    print("- Chuẩn bị dữ liệu")
+    train_samples, train_labels = load_data(train_json_dir, limit=2000, is_balanced=True)
+    test_samples, test_labels = load_data(test_json_dir, limit=None, is_balanced=False)
 
     if not train_samples:
         print("[-] Dữ liệu train rỗng. Vui lòng kiểm tra lại đường dẫn.")
         return
 
-    # Gom tất cả các nhãn lại để tạo dictionary
     all_labels = sorted(list(set(train_labels + test_labels)))
     label2id = {l: i for i, l in enumerate(all_labels)}
     id2label = {i: l for i, l in enumerate(all_labels)}
     
     print(f"[*] Phát hiện {len(all_labels)} nhãn: {all_labels}")
 
-    # Khởi tạo Processor
-    print("--- KHỞI TẠO MODEL & PROCESSOR ---")
+    print("- Khởi tạo Model & Processor")
     processor = LayoutLMv3Processor.from_pretrained('microsoft/layoutlmv3-base', apply_ocr=False)
 
     def preprocess_data(examples):
@@ -186,19 +176,19 @@ def main():
     )
 
     # Bắt đầu Train
-    print("--- BẮT ĐẦU HUẤN LUYỆN ---")
+    print("- Bắt đầu huấn luyện")
     trainer.train()
 
     # Đánh giá sau khi train xong
-    print("--- ĐÁNH GIÁ MÔ HÌNH ---")
+    print("- Danhád giá mô hình")
     metrics = trainer.evaluate()
     print(metrics)
 
     # Lưu model và processor vào thư mục config đã chỉ định
-    print(f"--- LƯU TRỌNG SỐ (WEIGHTS) VÀO: {WEIGHT_OUTPUT_DIR} ---")
-    trainer.save_model(WEIGHT_OUTPUT_DIR)
-    processor.save_pretrained(WEIGHT_OUTPUT_DIR)
-    print("[+] Hoàn thành! Quá trình Train Task 4 đã xong.")
+    print(f"- Lưu trọng số vào {weight_output_dir} ---")
+    trainer.save_model(weight_output_dir)
+    processor.save_pretrained(weight_output_dir)
+    print("- Hoàn thành! Train đã xong")
 
 if __name__ == "__main__":
     main()
