@@ -86,3 +86,4 @@ def generate_task3_json():
 
 if __name__ == "__main__":
     generate_task3_json()
+    # hahaha
