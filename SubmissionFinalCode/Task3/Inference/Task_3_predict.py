@@ -1,4 +1,11 @@
 from Config import config
+from transformers import TrOCRProcessor, VisionEncoderDecoderModel
+from dataset import FolderOCRDataset
+from torch.utils.data import random_split
+import torch
+from transformers import Seq2SeqTrainingArguments, Seq2SeqTrainer
+
+from Config import config
 
 Task_3_Predict_Config = config.return_Task3_Predict_Config()
 
