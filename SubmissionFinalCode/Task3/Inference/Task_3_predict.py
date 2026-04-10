@@ -1,44 +1,42 @@
 from Config import config
-import os
-import json
-import torch
-from PIL import Image
-from tqdm.auto import tqdm
 from transformers import TrOCRProcessor, VisionEncoderDecoderModel
+from dataset import FolderOCRDataset
+from torch.utils.data import random_split
+import torch
+from transformers import Seq2SeqTrainingArguments, Seq2SeqTrainer
+
+from Config import config
 
 Task_3_Predict_Config = config.return_Task3_Predict_Config()
 
+# Cấu hình file đường dẫn 
+json_dir = Task_3_Predict_Config["input_json"]
+image_dir = Task_3_Predict_Config["input_images"]
+
 # 1. Cấu hình thiết bị & Load Model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model_path = "D:/Project/Recognition-and-VQA-on-Handwritten-Documents/SubmissionFinalCode/Task3/Train/Weight/checkpoint-12186"
+model_path = Task_3_Predict_Config["weight"]
 
 processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
 model = VisionEncoderDecoderModel.from_pretrained(model_path).to(device)
 model.eval()
 
 def generate_task3_json():
-    image_dir = "D:/Project/Recognition-and-VQA-on-Handwritten-Documents/dataset_project/test_data/images"
-    json_dir = Task_3_Predict_Config["input_json"]
-    
-    output_dir = Task_3_Predict_Config.get("output_json", "./output_task3")
+    output_dir = Task_3_Predict_Config["output_json"]
     os.makedirs(output_dir, exist_ok=True)
 
     json_files = [f for f in os.listdir(json_dir) if f.endswith('.json')]
     valid_extensions = ['.jpg', '.jpeg', '.png', '.JPG', '.JPEG', '.PNG']
 
-    # Đếm xem đã làm được bao nhiêu file rồi
     already_done = len([f for f in os.listdir(output_dir) if f.endswith('.json')])
-    print(f"🚀 Tổng cộng {len(json_files)} file. Đã xử lý xong {already_done} file.")
-    print(f"⏩ Đang tiếp tục xử lý {len(json_files) - already_done} file còn lại...")
+    print(f"- Tổng cộng {len(json_files)} file. Đã xử lý xong {already_done} file.")
+    print(f"- Đang tiếp tục xử lý {len(json_files) - already_done} file còn lại...")
 
     for json_filename in tqdm(json_files):
         output_json_path = os.path.join(output_dir, json_filename)
         
-        # --- CƠ CHẾ RESUME TẠI ĐÂY ---
-        # Nếu file kết quả đã tồn tại, tức là đã xử lý xong trước đó -> Bỏ qua ngay
         if os.path.exists(output_json_path):
             continue
-        # -----------------------------
 
         json_path = os.path.join(json_dir, json_filename)
         base_name = os.path.splitext(json_filename)[0]
@@ -82,7 +80,7 @@ def generate_task3_json():
         with open(output_json_path, 'w', encoding='utf-8') as out_f:
             json.dump(data, out_f, ensure_ascii=False, indent=4)
 
-    print(f"✅ Hoàn thành! Các file JSON kết quả Task 3 đã được lưu tại: {output_dir}")
+    print(f"- Successfully. File Json is saved in: {output_dir}")
 
 if __name__ == "__main__":
     generate_task3_json()

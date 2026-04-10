@@ -9,9 +9,9 @@ import numpy as np
 
 # 1. Cấu hình
 Task_2_Config = config.return_Task2_Predict_Config()
-dataset_input_dir = Task_2_Config["json_test"]
-output_local_dir = Task_2_Config["output_json_inference"]
-image_dir = Task_2_Config["input_images_test"]
+dataset_input_dir = Task_2_Config["input_json"]
+output_local_dir = Task_2_Config["output_json"]
+image_dir = Task_2_Config["input_images"]
 
 os.makedirs(output_local_dir, exist_ok=True)
 

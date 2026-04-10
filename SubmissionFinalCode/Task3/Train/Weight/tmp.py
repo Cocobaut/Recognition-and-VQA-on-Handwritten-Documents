@@ -1,1 +1,0 @@
-# Tệp weight dùng để lưu file trọng số sau khi train
