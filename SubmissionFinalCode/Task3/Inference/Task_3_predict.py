@@ -1,10 +1,4 @@
 from Config import config
-import os
-import json
-import torch
-from PIL import Image
-from tqdm.auto import tqdm
-from transformers import TrOCRProcessor, VisionEncoderDecoderModel
 
 Task_3_Predict_Config = config.return_Task3_Predict_Config()
 
