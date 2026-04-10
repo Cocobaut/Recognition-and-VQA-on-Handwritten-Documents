@@ -1,0 +1,8 @@
+transformers==4.38.2
+datasets
+seqeval
+Pillow
+tqdm
+pandas
+accelerate==0.27.2
+# Không cần ghi torch vào đây vì ta sẽ dùng Base Image có sẵn PyTorch + CUDA của Nvidia
