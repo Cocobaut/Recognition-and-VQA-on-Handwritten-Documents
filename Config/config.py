@@ -64,6 +64,7 @@ def return_Task4_Train_Test_Config():
 
 #Config data for inference
 Dataset_Image_Inference = "dataset_project/predict_data"
+input_json_text = "dataset_project/predict_data/question"
 Output_Json_Task_1 = "SubmissionFinalCode/Task1/Inference/Task_1_predict_json"
 Output_Json_Task_2 = "SubmissionFinalCode/Task2/Inference/Task_2_predict_json"
 Output_Json_Task_3 = "SubmissionFinalCode/Task3/Inference/Task_3_predict_json"
@@ -101,7 +102,8 @@ Task_5_Predict_Config = {
     "input_json": Output_Json_Task_4,
     "input_images": Dataset_Image_Inference,
     "output_json": Output_Json_Task_5,
-    "weight": weight_task_5
+    "weight": weight_task_5,
+    "input_text": input_json_text
 }
 
 def return_Task1_Predict_Config():
