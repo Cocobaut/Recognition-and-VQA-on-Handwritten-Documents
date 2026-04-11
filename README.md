@@ -42,7 +42,7 @@ Once the environment and models are ready, start the end-to-end pipeline by runn
 
 ---
 
-## 🛠 System Workflow
+## 4. 🛠 System Workflow
 
 The system is designed as a sequential pipeline:
 
@@ -54,3 +54,6 @@ The system is designed as a sequential pipeline:
     * **Task 5 (Document AI/RAG):** Utilizes Llama 3 to answer questions based on the extracted data.
 
 ---
+
+### 5. Dataset
+Dataset is GNHK and HW-SQuAD
