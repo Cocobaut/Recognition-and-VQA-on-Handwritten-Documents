@@ -1,11 +1,21 @@
 from Config import config
 from transformers import TrOCRProcessor, VisionEncoderDecoderModel
-from dataset import FolderOCRDataset
 from torch.utils.data import random_split
 import torch
 from transformers import Seq2SeqTrainingArguments, Seq2SeqTrainer
+import os
+from tqdm import tqdm
+import sys
+import json
+from PIL import Image
 
-from Config import config
+current_dir = os.path.dirname(os.path.abspath(__file__))
+root_dir = os.path.abspath(os.path.join(current_dir, "../"))
+
+if root_dir not in sys.path:
+    sys.path.append(root_dir)
+
+from Train.dataset import FolderOCRDataset
 
 Task_3_Predict_Config = config.return_Task3_Predict_Config()
 
