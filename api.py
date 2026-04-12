@@ -5,7 +5,6 @@ import subprocess
 from fastapi import FastAPI, UploadFile, File, Form
 import uvicorn
 from contextlib import asynccontextmanager
-
 import Config.config as pipeline_config
 
 @asynccontextmanager
@@ -30,19 +29,16 @@ async def predict_vqa(
         input_text_dir = t5_cfg["input_text"]        
         output_json_final = t5_cfg["output_json"]    
 
-        # SỬA LỖI TẠI ĐÂY: Chỉ tạo thư mục cha, không tạo thư mục trùng tên file
         os.makedirs(input_img_dir, exist_ok=True)
         os.makedirs(input_text_dir, exist_ok=True)
         os.makedirs(os.path.dirname(output_json_final), exist_ok=True)
 
-        # Lưu ảnh
         img_path = os.path.join(input_img_dir, image.filename)
         with open(img_path, "wb") as buffer:
             buffer.write(await image.read())
             
         base_filename = os.path.splitext(image.filename)[0]
         
-        # Lưu câu hỏi (Task 5 sẽ quét thư mục này và lấy câu hỏi mang mã 00001)
         question_data = {
                     "00001": question
         }
@@ -50,10 +46,7 @@ async def predict_vqa(
         with open(question_path, "w", encoding="utf-8") as f:
             json.dump(question_data, f, ensure_ascii=False, indent=4)
 
-        # ---------------------------------------------------------
-        # CHẠY AI PIPELINE
-        # ---------------------------------------------------------
-        print(f"⚙️ Đang xử lý ảnh: {image.filename}")
+        print(f"Đang xử lý ảnh: {image.filename}")
         my_env = os.environ.copy()
         my_env["PYTHONPATH"] = os.getcwd()
         try:
@@ -63,13 +56,9 @@ async def predict_vqa(
             subprocess.run([sys.executable, "SubmissionFinalCode/Task4/Inference/Task_4_predict.py"], env=my_env, check=True)
             subprocess.run([sys.executable, "SubmissionFinalCode/Task5/Inference/Task_5_predict.py"], env=my_env, check=True)
         except Exception as task_err:
-            print(f"❌ Lỗi trong quá trình chạy Task: {task_err}")
+            print(f"Lỗi trong quá trình chạy Task: {task_err}")
             return {"status": "error", "message": "Lỗi khi chạy model AI."}
 
-        # ---------------------------------------------------------
-        # ĐỌC FILE KẾT QUẢ VÀ TRẢ VỀ API
-        # ---------------------------------------------------------
-        # SỬA LỖI TẠI ĐÂY: Đọc trực tiếp từ file kết quả do Task 5 nhả ra
         final_result_file = os.path.join(output_json_final, f"{base_filename}.json")
         answer = "Không tìm thấy đáp án"
         
@@ -77,7 +66,6 @@ async def predict_vqa(
             with open(final_result_file, "r", encoding="utf-8") as f:
                 result_data = json.load(f)
                 try:
-                    # Lấy đáp án mang mã 00001 mà mình đã mớm cho AI ở trên
                     if isinstance(result_data, list):
                         answer = result_data[0]["predictions"]["00001"]["answer"]
                     else:
@@ -85,10 +73,8 @@ async def predict_vqa(
                 except KeyError:
                     answer = "Có đáp án nhưng không trích xuất được (Sai cấu trúc JSON)"
 
-        # Dọn rác
         if os.path.exists(img_path): os.remove(img_path)
         if os.path.exists(question_path): os.remove(question_path)
-        #if os.path.exists(final_result_file): os.remove(final_result_file)
 
         return {
             "status": "success",

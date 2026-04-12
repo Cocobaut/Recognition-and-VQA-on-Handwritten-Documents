@@ -17,7 +17,7 @@ def check_data_exists(directory):
 
 def download_task_weights(folder_id, output_dir):
     if check_data_exists(output_dir):
-        print(f"✅ Dữ liệu Task 3 đã tồn tại trong '{output_dir}'. Bỏ qua bước tải!")
+        print(f"- Dữ liệu Task 3 đã tồn tại trong '{output_dir}'. Bỏ qua bước tải!")
         return
 
     os.makedirs(output_dir, exist_ok=True)
@@ -25,18 +25,18 @@ def download_task_weights(folder_id, output_dir):
     url = f'https://drive.google.com/uc?id={folder_id}'
 
     try:
-        print(f"⬇️ Đang tải dữ liệu Task 3 từ Drive...")
+        print(f"⬇- Đang tải dữ liệu Task 3 từ Drive...")
         gdown.download(url, zip_path, quiet=False)
         
         if os.path.exists(zip_path):
-            print("📦 Đang giải nén...")
+            print("- Đang giải nén...")
             with zipfile.ZipFile(zip_path, 'r') as zip_ref:
                 zip_ref.extractall(output_dir)
             os.remove(zip_path)
             
-        print(f"🎉 Thành công! Dữ liệu đã được lưu tại: {output_dir}")
+        print(f"Thành công! Dữ liệu đã được lưu tại: {output_dir}")
     except Exception as e:
-        print(f"❌ Lỗi: {e}")
+        print(f"Lỗi: {e}")
 
 if __name__ == "__main__":
     task_3_file_id = '10B_e4lGqCWoAEQcaGSKshkcFVY1wpMi1' 
