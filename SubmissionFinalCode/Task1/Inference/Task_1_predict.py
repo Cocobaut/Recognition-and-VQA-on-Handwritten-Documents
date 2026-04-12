@@ -11,7 +11,7 @@ import Config.config as config
 predict_config = config.return_Task1_Predict_Config()
 input_dir = predict_config["input_images"]
 output_dir = predict_config["output_json"]
-weight_path = os.path.join(predict_config["weight"], "YOLO11l_OBB_Task1_Precision", "weights", "best.pt")
+weight_path = os.path.join(predict_config["weight"], "weights", "best.pt")
 
 def run_inference():
     if not os.path.exists(weight_path):

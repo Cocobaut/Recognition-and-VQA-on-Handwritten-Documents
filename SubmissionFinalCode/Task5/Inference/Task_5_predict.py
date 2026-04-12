@@ -64,18 +64,16 @@ def main():
             except json.JSONDecodeError:
                 continue
 
-        # Đọc dữ liệu câu hỏi (Questions)
+        # Đọc dữ liệu câu hỏi (Questions)     
         with open(question_file_path, 'r', encoding='utf-8') as f:
             try:
                 questions_dict = json.load(f)
             except json.JSONDecodeError:
                 continue
-        
-        # Trích xuất text blocks để làm context
-        if 'input' not in context_data or 'text_blocks' not in context_data['input']:
+        if 'output_predicted' not in context_data or 'text_blocks' not in context_data['output_predicted']:
             continue
             
-        full_text_blocks = [f"[{block.get('type', 'BODY').upper()}]: {block.get('text', '')}" for block in context_data['input']['text_blocks']]
+        full_text_blocks = [f"[{block.get('type', 'BODY').upper()}]: {block.get('text', '')}" for block in context_data['output_predicted']['text_blocks']]
         full_context = " \n".join(full_text_blocks)
         
         file_results = {"file_name": file_name, "predictions": {}}
@@ -83,7 +81,9 @@ def main():
         # Duyệt qua từng câu hỏi trong file input_text
         for q_id, question_text in questions_dict.items():
             prompt = alpaca_prompt.format(question_text, full_context, "")
-            
+            print("\n=== NỘI DUNG THỰC SỰ ĐƯA VÀO CHO AI ĐỌC ===")
+            print(prompt)
+            print("===========================================\n")
             inputs = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=2048).to("cuda")
             
             with torch.no_grad():
@@ -105,10 +105,18 @@ def main():
         results.append(file_results)
         
     # 4. Lưu kết quả
-    with open(output_json, 'w', encoding='utf-8') as f:
-        json.dump(results, f, ensure_ascii=False, indent=4)
+    os.makedirs(output_json, exist_ok=True) # Đảm bảo thư mục tồn tại
+    
+    for res in results:
+        # Lấy tên file gốc (vd: Screenshot 2026-04-11 201143.json)
+        file_name = res["file_name"]
         
-    print(f"- Hoàn tất dự đoán. File lưu tại: {output_json}")
-
+        # Tạo đường dẫn quăng file vào trong folder
+        out_file = os.path.join(output_json, file_name)
+        
+        with open(out_file, 'w', encoding='utf-8') as f:
+            json.dump([res], f, ensure_ascii=False, indent=4)
+        
+    print(f"- Hoàn tất dự đoán. Các file kết quả đã lưu vào thư mục: {output_json}")
 if __name__ == "__main__":
     main()

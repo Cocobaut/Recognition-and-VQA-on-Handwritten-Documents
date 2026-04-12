@@ -1,12 +1,12 @@
 dataset_project/
 dataset_set_up/
-
 venv/
+.venv/
 
 *.pt
 *.pth
 *.pkl
-
+__pycache__/
 /SubmissionFinalCode/Task1/Train/Weight/*
 !/SubmissionFinalCode/Task1/Train/Weight/.gitkeep
 

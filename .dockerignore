@@ -1,0 +1,28 @@
+# 1. Bỏ qua môi trường ảo của máy thật (Để Docker tự cài mới)
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+
+# 2. Bỏ qua các file Model siêu nặng (Vì API sẽ tự tải lại bằng code gdown)
+*.pt
+*.pth
+*.pkl
+*.safetensors
+*.bin
+SubmissionFinalCode/Task1/Train/Weight/*
+SubmissionFinalCode/Task3/Train/Weight/*
+SubmissionFinalCode/Task4/Train/Weight/*
+SubmissionFinalCode/Task5/Train/Weight/*
+
+# 3. Bỏ qua Data và hình ảnh test không cần thiết cho API
+dataset_project/
+dataset_set_up/
+SubmissionFinalCode/Task2/Inference/Task_2_Visualization/
+SubmissionFinalCode/Task4/Inference/Task_4_Visualization/
+SubmissionFinalCode/Task1/Inference/Task_1_OBB_Visualization/
+
+# 4. Bỏ qua file của Git
+.git/
+.gitignore
