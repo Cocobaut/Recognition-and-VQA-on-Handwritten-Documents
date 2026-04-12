@@ -20,3 +20,8 @@ tqdm
 
 # --- Layout Analysis (Optional but recommended for LayoutLMv3) ---
 pyyaml
+
+# --- Api ---
+fastapi
+uvicorn[standard]
+python-multipart
