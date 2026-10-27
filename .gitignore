@@ -1,4 +1,6 @@
-dataset_project/
+dataset_project/**
+!dataset_project/**/
+!dataset_project/**/.gitkeep
 dataset_set_up/
 venv/
 .venv/
